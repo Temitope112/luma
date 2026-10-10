@@ -72,45 +72,50 @@ const loginSchema = z.object({
       "Password is required"
     ),
 });
-const forgotPasswordSchema =
-  z
-    .object({
-      email: z
-        .string()
-        .trim()
-        .email(
-          "Please enter a valid email address"
-        ),
-    })
-    .strict();
 
-const resetPasswordSchema =
-  z
-    .object({
-      token: z
-        .string()
-        .min(
-          1,
-          "Reset token is required"
-        ),
+const forgotPasswordSchema = z
+  .object({
+    email: z
+      .string()
+      .trim()
+      .email(
+        "Please enter a valid email address"
+      ),
+  })
+  .strict();
 
-      password: z
-        .string()
-        .min(
-          8,
-          "Password must be at least 8 characters"
-        ),
-    })
-    .strict();
+const resetPasswordSchema = z
+  .object({
+    token: z
+      .string()
+      .min(
+        1,
+        "Reset token is required"
+      ),
+
+    password: z
+      .string()
+      .min(
+        8,
+        "Password must be at least 8 characters"
+      ),
+  })
+  .strict();
+
+const isProduction =
+  process.env.NODE_ENV ===
+  "production";
+
 const cookieOptions = {
   httpOnly: true,
 
   secure:
-    process.env.NODE_ENV ===
-    "production",
+    isProduction,
 
   sameSite:
-    "lax" as const,
+    isProduction
+      ? ("none" as const)
+      : ("lax" as const),
 
   maxAge:
     7 *
@@ -118,6 +123,18 @@ const cookieOptions = {
     60 *
     60 *
     1000,
+};
+
+const clearCookieOptions = {
+  httpOnly: true,
+
+  secure:
+    isProduction,
+
+  sameSite:
+    isProduction
+      ? ("none" as const)
+      : ("lax" as const),
 };
 
 export const register = async (
@@ -192,15 +209,7 @@ export const logout = async (
 ) => {
   res.clearCookie(
     "token",
-    {
-      httpOnly: true,
-
-      secure:
-        process.env.NODE_ENV ===
-        "production",
-
-      sameSite: "lax",
-    }
+    clearCookieOptions
   );
 
   res.status(200).json({
@@ -246,16 +255,7 @@ export const getMe = async (
     if (!user) {
       res.clearCookie(
         "token",
-        {
-          httpOnly: true,
-
-          secure:
-            process.env
-              .NODE_ENV ===
-            "production",
-
-          sameSite: "lax",
-        }
+        clearCookieOptions
       );
 
       res.status(200).json({
@@ -292,13 +292,6 @@ export const forgotPassword =
           email
         );
 
-      /*
-       * We only send an email when
-       * the account actually exists.
-       *
-       * The API response below remains
-       * identical either way.
-       */
       if (result) {
         const clientUrl =
           process.env.CLIENT_URL ??
@@ -320,10 +313,6 @@ export const forgotPassword =
             resetUrl,
           });
         } catch (emailError) {
-          /*
-           * Do not reveal email-delivery
-           * failure to the requester.
-           */
           console.error(
             "Password reset email error:",
             emailError
@@ -331,9 +320,6 @@ export const forgotPassword =
         }
       }
 
-      /*
-       * Always exactly the same response.
-       */
       res.status(200).json({
         success: true,
 
@@ -344,6 +330,7 @@ export const forgotPassword =
       next(error);
     }
   };
+
 export const resetPassword =
   async (
     req: Request,
@@ -364,23 +351,9 @@ export const resetPassword =
         password
       );
 
-      /*
-       * Remove any current session
-       * from this browser.
-       */
       res.clearCookie(
         "token",
-        {
-          httpOnly: true,
-
-          secure:
-            process.env
-              .NODE_ENV ===
-            "production",
-
-          sameSite:
-            "lax",
-        }
+        clearCookieOptions
       );
 
       res.status(200).json({
@@ -393,5 +366,3 @@ export const resetPassword =
       next(error);
     }
   };
-
-  
