@@ -1,11 +1,15 @@
 import bcrypt from "bcryptjs";
-import { prisma } from "../utils/prisma";
-import { AppError } from "../middleware/error.middleware";
-import { generateToken } from "../utils/jwt";
+import crypto from "crypto";
+import { prisma } from "../utils/prisma.js";
+import { AppError } from "../middleware/error.middleware.js";
+import { generateToken } from "../utils/jwt.js";
 export const registerUser = async (data) => {
+    const normalizedEmail = data.email
+        .trim()
+        .toLowerCase();
     const existingUser = await prisma.user.findUnique({
         where: {
-            email: data.email.toLowerCase(),
+            email: normalizedEmail,
         },
     });
     if (existingUser) {
@@ -14,10 +18,11 @@ export const registerUser = async (data) => {
     const hashedPassword = await bcrypt.hash(data.password, 12);
     const user = await prisma.user.create({
         data: {
-            firstName: data.firstName,
-            lastName: data.lastName,
-            email: data.email.toLowerCase(),
+            firstName: data.firstName.trim(),
+            lastName: data.lastName.trim(),
+            email: normalizedEmail,
             password: hashedPassword,
+            role: "ATTENDEE",
         },
         select: {
             id: true,
@@ -38,9 +43,12 @@ export const registerUser = async (data) => {
     };
 };
 export const loginUser = async (data) => {
+    const normalizedEmail = data.email
+        .trim()
+        .toLowerCase();
     const user = await prisma.user.findUnique({
         where: {
-            email: data.email.toLowerCase(),
+            email: normalizedEmail,
         },
     });
     if (!user) {
@@ -65,3 +73,80 @@ export const loginUser = async (data) => {
         token,
     };
 };
+export const createPasswordResetToken = async (email) => {
+    const normalizedEmail = email
+        .trim()
+        .toLowerCase();
+    const user = await prisma.user.findUnique({
+        where: {
+            email: normalizedEmail,
+        },
+    });
+    /*
+     * Important:
+     * We deliberately do not throw if
+     * the email does not exist.
+     *
+     * This prevents account enumeration.
+     */
+    if (!user) {
+        return null;
+    }
+    const rawToken = crypto
+        .randomBytes(32)
+        .toString("hex");
+    const hashedToken = crypto
+        .createHash("sha256")
+        .update(rawToken)
+        .digest("hex");
+    const expiresAt = new Date(Date.now() +
+        30 *
+            60 *
+            1000);
+    await prisma.user.update({
+        where: {
+            id: user.id,
+        },
+        data: {
+            passwordResetToken: hashedToken,
+            passwordResetExpires: expiresAt,
+        },
+    });
+    return {
+        rawToken,
+        user,
+        expiresAt,
+    };
+};
+export const resetUserPassword = async (token, newPassword) => {
+    const hashedToken = crypto
+        .createHash("sha256")
+        .update(token)
+        .digest("hex");
+    const user = await prisma.user.findFirst({
+        where: {
+            passwordResetToken: hashedToken,
+            passwordResetExpires: {
+                gt: new Date(),
+            },
+        },
+    });
+    if (!user) {
+        throw new AppError("This password reset link is invalid or has expired", 400);
+    }
+    const hashedPassword = await bcrypt.hash(newPassword, 12);
+    await prisma.user.update({
+        where: {
+            id: user.id,
+        },
+        data: {
+            password: hashedPassword,
+            passwordResetToken: null,
+            passwordResetExpires: null,
+        },
+    });
+    return {
+        success: true,
+    };
+};
+//# sourceMappingURL=auth.service.js.map

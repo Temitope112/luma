@@ -11,3 +11,4 @@ export const generateTicketCode = () => {
         .toString("hex")
         .toUpperCase()}`;
 };
+//# sourceMappingURL=ticket-code.js.map

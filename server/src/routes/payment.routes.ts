@@ -3,9 +3,9 @@ import { Router } from "express";
 import {
   paystackWebhook,
   verifyPayment,
-} from "../controllers/payment.controller";
+} from "../controllers/payment.controller.js";
 
-import { protect } from "../middleware/auth.middleware";
+import { protect } from "../middleware/auth.middleware.js";
 
 const router = Router();
 

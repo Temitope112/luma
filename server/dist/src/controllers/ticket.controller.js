@@ -1,5 +1,5 @@
-import { AppError } from "../middleware/error.middleware";
-import { getMyTicketsService } from "../services/ticket.service";
+import { AppError } from "../middleware/error.middleware.js";
+import { getMyTicketsService } from "../services/ticket.service.js";
 export const getMyTickets = async (req, res, next) => {
     try {
         if (!req.user) {
@@ -16,3 +16,4 @@ export const getMyTickets = async (req, res, next) => {
         next(error);
     }
 };
+//# sourceMappingURL=ticket.controller.js.map

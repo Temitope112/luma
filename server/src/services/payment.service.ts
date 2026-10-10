@@ -1,5 +1,5 @@
-import { env } from "../config/env";
-import { AppError } from "../middleware/error.middleware";
+import { env } from "../config/env.js";
+import { AppError } from "../middleware/error.middleware.js";
 
 type InitializePaymentInput = {
   email: string;

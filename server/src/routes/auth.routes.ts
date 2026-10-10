@@ -7,18 +7,18 @@ import {
   logout,
   register,
   resetPassword,
-} from "../controllers/auth.controller";
+} from "../controllers/auth.controller.js";
 
 
 
 import {
   optionalAuth,
-} from "../middleware/auth.middleware";
+} from "../middleware/auth.middleware.js";
 
 import {
   forgotPasswordLimiter,
   resetPasswordLimiter,
-} from "../middleware/rate-limit.middleware";
+} from "../middleware/rate-limit.middleware.js";
 
 const router =
   Router();

@@ -11,17 +11,17 @@ import {
   loginUser,
   registerUser,
   resetUserPassword,
-} from "../services/auth.service";
+} from "../services/auth.service.js";
 
 import {
   sendPasswordResetEmail,
-} from "../services/email.service";
+} from "../services/email.service.js";
 
-import { prisma } from "../utils/prisma";
+import { prisma } from "../utils/prisma.js";
 
 import type {
   AuthenticatedRequest,
-} from "../middleware/auth.middleware";
+} from "../middleware/auth.middleware.js";
 
 const registerSchema = z
   .object({

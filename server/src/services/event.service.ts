@@ -1,6 +1,6 @@
-import { prisma } from "../utils/prisma";
-import { AppError } from "../middleware/error.middleware";
-import { createSlug } from "../utils/slug";
+import { prisma } from "../utils/prisma.js";
+import { AppError } from "../middleware/error.middleware.js";
+import { createSlug } from "../utils/slug.js";
 
 type CreateEventInput = {
   title: string;

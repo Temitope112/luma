@@ -1,7 +1,7 @@
-import { prisma } from "../utils/prisma";
-import { AppError } from "../middleware/error.middleware";
-import { generateOrderReference } from "../utils/ticket-code";
-import { initializePaystackPayment } from "./payment.service";
+import { prisma } from "../utils/prisma.js";
+import { AppError } from "../middleware/error.middleware.js";
+import { generateOrderReference } from "../utils/ticket-code.js";
+import { initializePaystackPayment } from "./payment.service.js";
 export const createOrderService = async (userId, data) => {
     if (data.items.length === 0) {
         throw new AppError("At least one ticket is required", 400);
@@ -187,3 +187,4 @@ export const getOrderByIdService = async (orderId, userId, role) => {
     }
     return order;
 };
+//# sourceMappingURL=order.service.js.map

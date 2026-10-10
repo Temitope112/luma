@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { AppError } from "../middleware/error.middleware";
-import { createTicketTypeService, deleteTicketTypeService, getTicketTypesService, updateTicketTypeService, } from "../services/ticket-type.service";
+import { AppError } from "../middleware/error.middleware.js";
+import { createTicketTypeService, deleteTicketTypeService, getTicketTypesService, updateTicketTypeService, } from "../services/ticket-type.service.js";
 const createTicketTypeSchema = z.object({
     name: z.string().min(2),
     description: z.string().optional(),
@@ -101,3 +101,4 @@ export const deleteTicketType = async (req, res, next) => {
         next(error);
     }
 };
+//# sourceMappingURL=ticket-type.controller.js.map

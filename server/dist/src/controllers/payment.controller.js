@@ -1,9 +1,9 @@
 import crypto from "crypto";
-import { env } from "../config/env";
-import { AppError } from "../middleware/error.middleware";
-import { verifyPaystackPayment } from "../services/payment.service";
-import { fulfillOrder } from "../services/order-fulfillment.service";
-import { prisma } from "../utils/prisma";
+import { env } from "../config/env.js";
+import { AppError } from "../middleware/error.middleware.js";
+import { verifyPaystackPayment } from "../services/payment.service.js";
+import { fulfillOrder } from "../services/order-fulfillment.service.js";
+import { prisma } from "../utils/prisma.js";
 export const verifyPayment = async (req, res, next) => {
     try {
         if (!req.user) {
@@ -122,3 +122,4 @@ export const paystackWebhook = async (req, res) => {
         return res.sendStatus(500);
     }
 };
+//# sourceMappingURL=payment.controller.js.map

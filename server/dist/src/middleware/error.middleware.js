@@ -25,3 +25,4 @@ export const errorHandler = (err, req, res, next) => {
         }),
     });
 };
+//# sourceMappingURL=error.middleware.js.map

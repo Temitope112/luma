@@ -1,7 +1,7 @@
-import { prisma } from "../utils/prisma";
-import { AppError } from "../middleware/error.middleware";
-import { generateOrderReference } from "../utils/ticket-code";
-import { initializePaystackPayment } from "./payment.service";
+import { prisma } from "../utils/prisma.js";
+import { AppError } from "../middleware/error.middleware.js";
+import { generateOrderReference } from "../utils/ticket-code.js";
+import { initializePaystackPayment } from "./payment.service.js";
 
 type OrderItemInput = {
   ticketTypeId: string;

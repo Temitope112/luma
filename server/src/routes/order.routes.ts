@@ -4,9 +4,9 @@ import {
   createOrder,
   getMyOrders,
   getOrderById,
-} from "../controllers/order.controller";
+} from "../controllers/order.controller.js";
 
-import { protect } from "../middleware/auth.middleware";
+import { protect } from "../middleware/auth.middleware.js";
 
 const router = Router();
 

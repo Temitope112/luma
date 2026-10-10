@@ -1,5 +1,5 @@
-import { env } from "../config/env";
-import { AppError } from "../middleware/error.middleware";
+import { env } from "../config/env.js";
+import { AppError } from "../middleware/error.middleware.js";
 export const initializePaystackPayment = async (data) => {
     const response = await fetch(`${env.PAYSTACK_BASE_URL}/transaction/initialize`, {
         method: "POST",
@@ -36,3 +36,4 @@ export const verifyPaystackPayment = async (reference) => {
     }
     return result.data;
 };
+//# sourceMappingURL=payment.service.js.map

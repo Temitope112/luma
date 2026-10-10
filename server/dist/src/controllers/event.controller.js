@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { AppError } from "../middleware/error.middleware";
-import { createEventService, deleteEventService, getAllEventsService, getEventByIdService, publishEventService, updateEventService, } from "../services/event.service";
+import { AppError } from "../middleware/error.middleware.js";
+import { createEventService, deleteEventService, getAllEventsService, getEventByIdService, getEventBySlugService, publishEventService, updateEventService, } from "../services/event.service.js";
 const createEventSchema = z.object({
     title: z.string().min(3),
     description: z.string().min(10),
@@ -124,3 +124,21 @@ export const publishEvent = async (req, res, next) => {
         next(error);
     }
 };
+export const getEventBySlug = async (req, res, next) => {
+    try {
+        const slug = req.params.slug;
+        if (!slug ||
+            Array.isArray(slug)) {
+            throw new AppError("Event slug is required", 400);
+        }
+        const event = await getEventBySlugService(slug);
+        res.status(200).json({
+            success: true,
+            event,
+        });
+    }
+    catch (error) {
+        next(error);
+    }
+};
+//# sourceMappingURL=event.controller.js.map

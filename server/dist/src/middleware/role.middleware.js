@@ -1,4 +1,4 @@
-import { AppError } from "./error.middleware";
+import { AppError } from "./error.middleware.js";
 export const allowRoles = (...roles) => (req, res, next) => {
     if (!req.user) {
         return next(new AppError("You are not authenticated", 401));
@@ -8,3 +8,4 @@ export const allowRoles = (...roles) => (req, res, next) => {
     }
     next();
 };
+//# sourceMappingURL=role.middleware.js.map

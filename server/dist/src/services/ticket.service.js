@@ -1,4 +1,4 @@
-import { prisma } from "../utils/prisma";
+import { prisma } from "../utils/prisma.js";
 export const getMyTicketsService = async (userId) => {
     return prisma.ticket.findMany({
         where: {
@@ -29,3 +29,4 @@ export const getMyTicketsService = async (userId) => {
         },
     });
 };
+//# sourceMappingURL=ticket.service.js.map

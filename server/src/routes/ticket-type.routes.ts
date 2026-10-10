@@ -5,10 +5,10 @@ import {
   deleteTicketType,
   getTicketTypes,
   updateTicketType,
-} from "../controllers/ticket-type.controller";
+} from "../controllers/ticket-type.controller.js";
 
-import { protect } from "../middleware/auth.middleware";
-import { allowRoles } from "../middleware/role.middleware";
+import { protect } from "../middleware/auth.middleware.js";
+import { allowRoles } from "../middleware/role.middleware.js";
 
 const router = Router();
 

@@ -1,6 +1,6 @@
-import { prisma } from "../utils/prisma";
-import { AppError } from "../middleware/error.middleware";
-import { generateTicketCode } from "../utils/ticket-code";
+import { prisma } from "../utils/prisma.js";
+import { AppError } from "../middleware/error.middleware.js";
+import { generateTicketCode } from "../utils/ticket-code.js";
 
 type FulfillmentPayment = {
   reference: string;

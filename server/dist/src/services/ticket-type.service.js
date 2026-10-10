@@ -1,5 +1,5 @@
-import { prisma } from "../utils/prisma";
-import { AppError } from "../middleware/error.middleware";
+import { prisma } from "../utils/prisma.js";
+import { AppError } from "../middleware/error.middleware.js";
 export const createTicketTypeService = async (eventId, userId, role, data) => {
     const event = await prisma.event.findUnique({
         where: {
@@ -104,3 +104,4 @@ export const deleteTicketTypeService = async (ticketTypeId, userId, role) => {
         message: "Ticket type deleted successfully",
     };
 };
+//# sourceMappingURL=ticket-type.service.js.map

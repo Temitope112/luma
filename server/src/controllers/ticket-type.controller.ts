@@ -5,15 +5,15 @@ import type {
 
 import { z } from "zod";
 
-import type { AuthenticatedRequest } from "../middleware/auth.middleware";
-import { AppError } from "../middleware/error.middleware";
+import type { AuthenticatedRequest } from "../middleware/auth.middleware.js";
+import { AppError } from "../middleware/error.middleware.js";
 
 import {
   createTicketTypeService,
   deleteTicketTypeService,
   getTicketTypesService,
   updateTicketTypeService,
-} from "../services/ticket-type.service";
+} from "../services/ticket-type.service.js";
 
 const createTicketTypeSchema = z.object({
   name: z.string().min(2),

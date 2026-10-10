@@ -3,9 +3,9 @@ import type {
   Response,
 } from "express";
 
-import type { AuthenticatedRequest } from "../middleware/auth.middleware";
-import { AppError } from "../middleware/error.middleware";
-import { getMyTicketsService } from "../services/ticket.service";
+import type { AuthenticatedRequest } from "../middleware/auth.middleware.js";
+import { AppError } from "../middleware/error.middleware.js";
+import { getMyTicketsService } from "../services/ticket.service.js";
 
 export const getMyTickets = async (
   req: AuthenticatedRequest,

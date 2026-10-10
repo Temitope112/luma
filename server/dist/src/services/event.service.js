@@ -1,6 +1,6 @@
-import { prisma } from "../utils/prisma";
-import { AppError } from "../middleware/error.middleware";
-import { createSlug } from "../utils/slug";
+import { prisma } from "../utils/prisma.js";
+import { AppError } from "../middleware/error.middleware.js";
+import { createSlug } from "../utils/slug.js";
 export const createEventService = async (data) => {
     let slug = createSlug(data.title);
     const existingSlug = await prisma.event.findUnique({
@@ -177,3 +177,29 @@ export const publishEventService = async (eventId, userId, role) => {
     });
     return publishedEvent;
 };
+export const getEventBySlugService = async (slug) => {
+    const event = await prisma.event.findUnique({
+        where: {
+            slug,
+        },
+        include: {
+            organizer: {
+                select: {
+                    id: true,
+                    firstName: true,
+                    lastName: true,
+                    email: true,
+                },
+            },
+            ticketTypes: true,
+        },
+    });
+    if (!event) {
+        throw new AppError("Event not found", 404);
+    }
+    if (event.status !== "PUBLISHED") {
+        throw new AppError("Event is not available", 404);
+    }
+    return event;
+};
+//# sourceMappingURL=event.service.js.map

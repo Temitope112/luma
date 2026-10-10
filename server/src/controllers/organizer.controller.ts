@@ -3,11 +3,11 @@ import type {
   Response,
 } from "express";
 
-import type { AuthenticatedRequest } from "../middleware/auth.middleware";
+import type { AuthenticatedRequest } from "../middleware/auth.middleware.js";
 
-import { AppError } from "../middleware/error.middleware";
+import { AppError } from "../middleware/error.middleware.js";
 
-import { getOrganizerDashboardService } from "../services/organizer.service";
+import { getOrganizerDashboardService } from "../services/organizer.service.js";
 
 export const getOrganizerDashboard =
   async (

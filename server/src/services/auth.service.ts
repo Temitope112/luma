@@ -1,11 +1,11 @@
 import bcrypt from "bcryptjs";
 import crypto from "crypto";
 
-import { prisma } from "../utils/prisma";
+import { prisma } from "../utils/prisma.js";
 
-import { AppError } from "../middleware/error.middleware";
+import { AppError } from "../middleware/error.middleware.js";
 
-import { generateToken } from "../utils/jwt";
+import { generateToken } from "../utils/jwt.js";
 
 type RegisterInput = {
   firstName: string;

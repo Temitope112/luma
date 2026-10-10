@@ -1,5 +1,5 @@
-import { prisma } from "../utils/prisma";
-import { AppError } from "../middleware/error.middleware";
+import { prisma } from "../utils/prisma.js";
+import { AppError } from "../middleware/error.middleware.js";
 
 export const getOrganizerDashboardService = async (
   userId: string,

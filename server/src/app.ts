@@ -2,21 +2,21 @@ import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 
-import { env } from "./config/env";
+import { env } from "./config/env.js";
 
-import authRoutes from "./routes/auth.routes";
-import eventRoutes from "./routes/event.routes";
-import ticketTypeRoutes from "./routes/ticket-type.routes";
-import orderRoutes from "./routes/order.routes";
-import ticketRoutes from "./routes/ticket.routes";
-import paymentRoutes from "./routes/payment.routes";
-import organizerRoutes from "./routes/organizer.routes";
-import { paystackWebhook } from "./controllers/payment.controller";
+import authRoutes from "./routes/auth.routes.js";
+import eventRoutes from "./routes/event.routes.js";
+import ticketTypeRoutes from "./routes/ticket-type.routes.js";
+import orderRoutes from "./routes/order.routes.js";
+import ticketRoutes from "./routes/ticket.routes.js";
+import paymentRoutes from "./routes/payment.routes.js";
+import organizerRoutes from "./routes/organizer.routes.js";
+import { paystackWebhook } from "./controllers/payment.controller.js";
 
 import {
   errorHandler,
   notFoundHandler,
-} from "./middleware/error.middleware";
+} from "./middleware/error.middleware.js";
 
 const app = express();
 

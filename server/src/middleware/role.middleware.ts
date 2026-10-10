@@ -1,6 +1,6 @@
 import type { NextFunction, Response } from "express";
-import type { AuthenticatedRequest } from "./auth.middleware";
-import { AppError } from "./error.middleware";
+import type { AuthenticatedRequest } from "./auth.middleware.js";
+import { AppError } from "./error.middleware.js";
 
 type Role = "ATTENDEE" | "ORGANIZER" | "ADMIN";
 

@@ -4,8 +4,8 @@ import type {
   Response,
 } from "express";
 
-import { AppError } from "./error.middleware";
-import { verifyToken } from "../utils/jwt";
+import { AppError } from "./error.middleware.js";
+import { verifyToken } from "../utils/jwt.js";
 
 export interface AuthenticatedRequest extends Request {
   user?: {

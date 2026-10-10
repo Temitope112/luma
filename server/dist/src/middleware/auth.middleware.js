@@ -1,5 +1,14 @@
-import { AppError } from "./error.middleware";
-import { verifyToken } from "../utils/jwt";
+import { AppError } from "./error.middleware.js";
+import { verifyToken } from "../utils/jwt.js";
+/**
+ * Required authentication.
+ *
+ * Use this for protected routes such as:
+ * - orders
+ * - payments
+ * - organizer actions
+ * - ticket management
+ */
 export const protect = (req, res, next) => {
     try {
         const token = req.cookies?.token;
@@ -19,3 +28,37 @@ export const protect = (req, res, next) => {
             : new AppError("Invalid or expired authentication token", 401));
     }
 };
+/**
+ * Optional authentication.
+ *
+ * Used for routes where being logged out is
+ * a valid state, such as GET /auth/me.
+ */
+export const optionalAuth = (req, res, next) => {
+    const token = req.cookies?.token;
+    if (!token) {
+        next();
+        return;
+    }
+    try {
+        const decoded = verifyToken(token);
+        req.user = {
+            userId: decoded.userId,
+            role: decoded.role,
+        };
+        next();
+    }
+    catch {
+        // Remove an invalid/expired cookie.
+        res.clearCookie("token", {
+            httpOnly: true,
+            secure: process.env.NODE_ENV ===
+                "production",
+            sameSite: "lax",
+        });
+        // An expired session simply means
+        // the user is now logged out.
+        next();
+    }
+};
+//# sourceMappingURL=auth.middleware.js.map

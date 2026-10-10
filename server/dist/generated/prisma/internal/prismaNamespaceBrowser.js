@@ -65,6 +65,8 @@ export const UserScalarFieldEnum = {
     role: 'role',
     avatar: 'avatar',
     phone: 'phone',
+    passwordResetToken: 'passwordResetToken',
+    passwordResetExpires: 'passwordResetExpires',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
 };
@@ -155,3 +157,4 @@ export const NullsOrder = {
     first: 'first',
     last: 'last'
 };
+//# sourceMappingURL=prismaNamespaceBrowser.js.map

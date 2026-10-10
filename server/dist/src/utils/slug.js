@@ -6,3 +6,4 @@ export const createSlug = (value) => {
         .replace(/\s+/g, "-")
         .replace(/-+/g, "-");
 };
+//# sourceMappingURL=slug.js.map

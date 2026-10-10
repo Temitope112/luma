@@ -5,14 +5,14 @@ import type {
 
 import { z } from "zod";
 
-import type { AuthenticatedRequest } from "../middleware/auth.middleware";
-import { AppError } from "../middleware/error.middleware";
+import type { AuthenticatedRequest } from "../middleware/auth.middleware.js";
+import { AppError } from "../middleware/error.middleware.js";
 
 import {
   createOrderService,
   getMyOrdersService,
   getOrderByIdService,
-} from "../services/order.service";
+} from "../services/order.service.js";
 
 const createOrderSchema = z.object({
   eventId: z.string().min(1),

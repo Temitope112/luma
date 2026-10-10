@@ -6,15 +6,15 @@ import type {
   Response,
 } from "express";
 
-import type { AuthenticatedRequest } from "../middleware/auth.middleware";
+import type { AuthenticatedRequest } from "../middleware/auth.middleware.js";
 
-import { env } from "../config/env";
-import { AppError } from "../middleware/error.middleware";
+import { env } from "../config/env.js";
+import { AppError } from "../middleware/error.middleware.js";
 
-import { verifyPaystackPayment } from "../services/payment.service";
-import { fulfillOrder } from "../services/order-fulfillment.service";
+import { verifyPaystackPayment } from "../services/payment.service.js";
+import { fulfillOrder } from "../services/order-fulfillment.service.js";
 
-import { prisma } from "../utils/prisma";
+import { prisma } from "../utils/prisma.js";
 
 export const verifyPayment = async (
   req: AuthenticatedRequest,

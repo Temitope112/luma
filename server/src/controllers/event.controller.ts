@@ -5,8 +5,8 @@ import type {
 
 import { z } from "zod";
 
-import type { AuthenticatedRequest } from "../middleware/auth.middleware";
-import { AppError } from "../middleware/error.middleware";
+import type { AuthenticatedRequest } from "../middleware/auth.middleware.js";
+import { AppError } from "../middleware/error.middleware.js";
 
 import {
   createEventService,
@@ -16,7 +16,7 @@ import {
   getEventBySlugService,
   publishEventService,
   updateEventService,
-} from "../services/event.service";
+} from "../services/event.service.js";
 
 const createEventSchema = z.object({
   title: z.string().min(3),

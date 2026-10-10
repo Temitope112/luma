@@ -8,10 +8,10 @@ import {
   getEventBySlug,
   publishEvent,
   updateEvent,
-} from "../controllers/event.controller";
+} from "../controllers/event.controller.js";
 
-import { protect } from "../middleware/auth.middleware";
-import { allowRoles } from "../middleware/role.middleware";
+import { protect } from "../middleware/auth.middleware.js";
+import { allowRoles } from "../middleware/role.middleware.js";
 
 const router = Router();
 

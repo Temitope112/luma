@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { AppError } from "../middleware/error.middleware";
-import { createOrderService, getMyOrdersService, getOrderByIdService, } from "../services/order.service";
+import { AppError } from "../middleware/error.middleware.js";
+import { createOrderService, getMyOrdersService, getOrderByIdService, } from "../services/order.service.js";
 const createOrderSchema = z.object({
     eventId: z.string().min(1),
     items: z
@@ -67,3 +67,4 @@ export const getOrderById = async (req, res, next) => {
         next(error);
     }
 };
+//# sourceMappingURL=order.controller.js.map

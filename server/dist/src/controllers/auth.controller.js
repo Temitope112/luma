@@ -1,33 +1,63 @@
 import { z } from "zod";
-import { loginUser, registerUser, } from "../services/auth.service";
-import { prisma } from "../utils/prisma";
-const registerSchema = z.object({
+import { createPasswordResetToken, loginUser, registerUser, resetUserPassword, } from "../services/auth.service.js";
+import { sendPasswordResetEmail, } from "../services/email.service.js";
+import { prisma } from "../utils/prisma.js";
+const registerSchema = z
+    .object({
     firstName: z
         .string()
+        .trim()
         .min(2, "First name must be at least 2 characters"),
     lastName: z
         .string()
+        .trim()
         .min(2, "Last name must be at least 2 characters"),
     email: z
         .string()
+        .trim()
         .email("Please enter a valid email address"),
     password: z
         .string()
         .min(8, "Password must be at least 8 characters"),
-});
+})
+    .strict();
 const loginSchema = z.object({
     email: z
         .string()
+        .trim()
         .email("Please enter a valid email address"),
     password: z
         .string()
         .min(1, "Password is required"),
 });
+const forgotPasswordSchema = z
+    .object({
+    email: z
+        .string()
+        .trim()
+        .email("Please enter a valid email address"),
+})
+    .strict();
+const resetPasswordSchema = z
+    .object({
+    token: z
+        .string()
+        .min(1, "Reset token is required"),
+    password: z
+        .string()
+        .min(8, "Password must be at least 8 characters"),
+})
+    .strict();
 const cookieOptions = {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
+    secure: process.env.NODE_ENV ===
+        "production",
     sameSite: "lax",
-    maxAge: 7 * 24 * 60 * 60 * 1000,
+    maxAge: 7 *
+        24 *
+        60 *
+        60 *
+        1000,
 };
 export const register = async (req, res, next) => {
     try {
@@ -60,7 +90,12 @@ export const login = async (req, res, next) => {
     }
 };
 export const logout = async (req, res) => {
-    res.clearCookie("token");
+    res.clearCookie("token", {
+        httpOnly: true,
+        secure: process.env.NODE_ENV ===
+            "production",
+        sameSite: "lax",
+    });
     res.status(200).json({
         success: true,
         message: "Logged out successfully",
@@ -69,7 +104,11 @@ export const logout = async (req, res) => {
 export const getMe = async (req, res, next) => {
     try {
         if (!req.user) {
-            throw new Error("Authenticated user not found");
+            res.status(200).json({
+                success: true,
+                user: null,
+            });
+            return;
         }
         const user = await prisma.user.findUnique({
             where: {
@@ -87,9 +126,16 @@ export const getMe = async (req, res, next) => {
             },
         });
         if (!user) {
-            res.status(404).json({
-                success: false,
-                message: "User not found",
+            res.clearCookie("token", {
+                httpOnly: true,
+                secure: process.env
+                    .NODE_ENV ===
+                    "production",
+                sameSite: "lax",
+            });
+            res.status(200).json({
+                success: true,
+                user: null,
             });
             return;
         }
@@ -102,3 +148,70 @@ export const getMe = async (req, res, next) => {
         next(error);
     }
 };
+export const forgotPassword = async (req, res, next) => {
+    try {
+        const { email } = forgotPasswordSchema.parse(req.body);
+        const result = await createPasswordResetToken(email);
+        /*
+         * We only send an email when
+         * the account actually exists.
+         *
+         * The API response below remains
+         * identical either way.
+         */
+        if (result) {
+            const clientUrl = process.env.CLIENT_URL ??
+                "http://localhost:3000";
+            const resetUrl = `${clientUrl}/reset-password?token=${encodeURIComponent(result.rawToken)}`;
+            try {
+                await sendPasswordResetEmail({
+                    email: result.user.email,
+                    firstName: result.user.firstName,
+                    resetUrl,
+                });
+            }
+            catch (emailError) {
+                /*
+                 * Do not reveal email-delivery
+                 * failure to the requester.
+                 */
+                console.error("Password reset email error:", emailError);
+            }
+        }
+        /*
+         * Always exactly the same response.
+         */
+        res.status(200).json({
+            success: true,
+            message: "Your password reset request has been received.",
+        });
+    }
+    catch (error) {
+        next(error);
+    }
+};
+export const resetPassword = async (req, res, next) => {
+    try {
+        const { token, password, } = resetPasswordSchema.parse(req.body);
+        await resetUserPassword(token, password);
+        /*
+         * Remove any current session
+         * from this browser.
+         */
+        res.clearCookie("token", {
+            httpOnly: true,
+            secure: process.env
+                .NODE_ENV ===
+                "production",
+            sameSite: "lax",
+        });
+        res.status(200).json({
+            success: true,
+            message: "Your password has been reset successfully.",
+        });
+    }
+    catch (error) {
+        next(error);
+    }
+};
+//# sourceMappingURL=auth.controller.js.map
