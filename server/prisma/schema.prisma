@@ -1,0 +1,211 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum UserRole {
+  ATTENDEE
+  ORGANIZER
+  ADMIN
+}
+
+enum EventStatus {
+  DRAFT
+  PUBLISHED
+  CANCELLED
+  COMPLETED
+}
+
+enum OrderStatus {
+  PENDING
+  PROCESSING
+  PAID
+  CANCELLED
+  REFUNDED
+}
+
+enum TicketStatus {
+  VALID
+  USED
+  CANCELLED
+}
+
+model User {
+  id        String   @id @default(uuid())
+  firstName String
+  lastName  String
+  email     String   @unique
+  password  String
+  role      UserRole @default(ATTENDEE)
+  avatar    String?
+  phone     String?
+
+  passwordResetToken   String?
+  passwordResetExpires DateTime?
+
+  events  Event[]
+  orders  Order[]
+  tickets Ticket[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Event {
+  id          String  @id @default(uuid())
+  title       String
+  slug        String  @unique
+  description String
+  category    String?
+  image       String?
+
+  venue   String
+  address String?
+  city    String?
+  country String  @default("Nigeria")
+
+  startsAt DateTime
+  endsAt   DateTime?
+
+  capacity Int?
+
+  status EventStatus @default(DRAFT)
+
+  organizerId String
+  organizer   User   @relation(fields: [organizerId], references: [id], onDelete: Cascade)
+
+  ticketTypes TicketType[]
+  orders      Order[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([organizerId])
+  @@index([status])
+  @@index([startsAt])
+}
+
+model TicketType {
+  id          String  @id @default(uuid())
+  name        String
+  description String?
+
+  price    Decimal @db.Decimal(12, 2)
+  quantity Int
+  sold     Int     @default(0)
+
+  salesStart DateTime?
+  salesEnd   DateTime?
+
+  eventId String
+  event   Event  @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  orderItems OrderItem[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([eventId])
+}
+
+model Order {
+  id String @id @default(uuid())
+
+  reference String @unique
+
+  totalAmount Decimal @db.Decimal(12, 2)
+
+  status OrderStatus @default(PENDING)
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  eventId String
+  event   Event  @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  items           OrderItem[]
+  paymentAttempts PaymentAttempt[]
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+
+  @@index([userId])
+  @@index([eventId])
+  @@index([status])
+}
+
+model OrderItem {
+  id String @id @default(uuid())
+
+  quantity  Int
+  unitPrice Decimal @db.Decimal(12, 2)
+
+  orderId String
+  order   Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  ticketTypeId String
+  ticketType   TicketType @relation(fields: [ticketTypeId], references: [id])
+
+  tickets Ticket[]
+
+  createdAt DateTime @default(now())
+
+  @@index([orderId])
+  @@index([ticketTypeId])
+}
+
+model Ticket {
+  id String @id @default(uuid())
+
+  code   String       @unique
+  status TicketStatus @default(VALID)
+
+  checkedInAt DateTime?
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  orderItemId String
+  orderItem   OrderItem @relation(fields: [orderItemId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([status])
+}
+
+enum PaymentStatus {
+  INITIALIZED
+  SUCCESS
+  FAILED
+}
+
+model PaymentAttempt {
+  id String @id @default(uuid())
+
+  provider          String
+  providerReference String  @unique
+  providerTxnId     String? @unique
+
+  amount   Decimal @db.Decimal(12, 2)
+  currency String  @default("NGN")
+
+  status PaymentStatus @default(INITIALIZED)
+
+  channel         String?
+  gatewayResponse String?
+  paidAt          DateTime?
+
+  orderId String
+  order   Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([orderId])
+  @@index([status])
+}
