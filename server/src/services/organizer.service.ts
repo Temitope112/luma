@@ -223,6 +223,16 @@ export const checkInTicketService =
     const ticketCode =
       extractTicketCode(value);
 
+      console.log(
+  "CHECK-IN VALUE RECEIVED:",
+  JSON.stringify(value)
+);
+
+console.log(
+  "CHECK-IN CODE SEARCHING:",
+  JSON.stringify(ticketCode)
+);
+
     const ticket =
       await prisma.ticket.findUnique({
         where: {
@@ -393,6 +403,16 @@ export const checkInTicketService =
           },
         },
       });
+      console.log(
+  "CHECK-IN RESULT:",
+  ticket
+    ? {
+        id: ticket.id,
+        code: ticket.code,
+        status: ticket.status,
+      }
+    : null
+);
 
     return checkedInTicket;
   };
