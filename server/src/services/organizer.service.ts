@@ -177,3 +177,222 @@ export const getOrganizerDashboardService = async (
     recentSales,
   };
 };
+const extractTicketCode = (
+  value: string
+) => {
+  const trimmed =
+    value.trim();
+
+  if (!trimmed) {
+    throw new AppError(
+      "Ticket code is required",
+      400
+    );
+  }
+
+  const prefix =
+    "LUMA:TICKET:";
+
+  if (
+    trimmed.startsWith(prefix)
+  ) {
+    return trimmed.slice(
+      prefix.length
+    );
+  }
+
+  return trimmed;
+};
+
+export const checkInTicketService =
+  async (
+    value: string,
+    userId: string,
+    role: string
+  ) => {
+    if (
+      role !== "ORGANIZER" &&
+      role !== "ADMIN"
+    ) {
+      throw new AppError(
+        "Organizer access required",
+        403
+      );
+    }
+
+    const ticketCode =
+      extractTicketCode(value);
+
+    const ticket =
+      await prisma.ticket.findUnique({
+        where: {
+          code: ticketCode,
+        },
+
+        include: {
+          user: {
+            select: {
+              id: true,
+              firstName: true,
+              lastName: true,
+              email: true,
+            },
+          },
+
+          orderItem: {
+            include: {
+              ticketType: {
+                select: {
+                  id: true,
+                  name: true,
+                },
+              },
+
+              order: {
+                include: {
+                  event: {
+                    select: {
+                      id: true,
+                      title: true,
+                      slug: true,
+                      venue: true,
+                      city: true,
+                      startsAt: true,
+                      status: true,
+                      organizerId: true,
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      });
+
+    if (!ticket) {
+      throw new AppError(
+        "Ticket not found",
+        404
+      );
+    }
+
+    const event =
+      ticket.orderItem.order.event;
+
+    if (
+      role !== "ADMIN" &&
+      event.organizerId !==
+        userId
+    ) {
+      throw new AppError(
+        "This ticket does not belong to one of your events",
+        403
+      );
+    }
+
+    if (
+      event.status ===
+      "CANCELLED"
+    ) {
+      throw new AppError(
+        "This event has been cancelled",
+        400
+      );
+    }
+
+    if (
+      ticket.status ===
+      "CANCELLED"
+    ) {
+      throw new AppError(
+        "This ticket has been cancelled",
+        409
+      );
+    }
+
+    if (
+      ticket.status ===
+        "USED" ||
+      ticket.checkedInAt
+    ) {
+      throw new AppError(
+        "This ticket has already been checked in",
+        409
+      );
+    }
+
+    /*
+     * Atomic update prevents two scanners
+     * from checking in the same ticket
+     * at exactly the same time.
+     */
+    const result =
+      await prisma.ticket.updateMany({
+        where: {
+          id: ticket.id,
+          status: "VALID",
+          checkedInAt: null,
+        },
+
+        data: {
+          status: "USED",
+          checkedInAt:
+            new Date(),
+        },
+      });
+
+    if (
+      result.count === 0
+    ) {
+      throw new AppError(
+        "This ticket has already been checked in",
+        409
+      );
+    }
+
+    const checkedInTicket =
+      await prisma.ticket.findUnique({
+        where: {
+          id: ticket.id,
+        },
+
+        include: {
+          user: {
+            select: {
+              id: true,
+              firstName: true,
+              lastName: true,
+              email: true,
+            },
+          },
+
+          orderItem: {
+            include: {
+              ticketType: {
+                select: {
+                  id: true,
+                  name: true,
+                },
+              },
+
+              order: {
+                include: {
+                  event: {
+                    select: {
+                      id: true,
+                      title: true,
+                      slug: true,
+                      venue: true,
+                      city: true,
+                      startsAt: true,
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      });
+
+    return checkedInTicket;
+  };
