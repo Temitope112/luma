@@ -17,8 +17,15 @@ export type TicketStatus =
 
 export type OrderTicket = {
   id: string;
-  status: TicketStatus;
-  createdAt?: string;
+  code: string;
+  status:
+    | "VALID"
+    | "USED"
+    | "CANCELLED";
+  checkedInAt:
+    | string
+    | null;
+  createdAt: string;
 };
 
 export type OrderItem = {

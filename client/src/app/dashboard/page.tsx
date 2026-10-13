@@ -10,6 +10,10 @@ import {
 import { useRouter } from "next/navigation";
 
 import {
+  ScanLine,
+} from "lucide-react";
+
+import {
   ArrowUpRight,
   CalendarDays,
   CircleDollarSign,
@@ -268,6 +272,14 @@ export default function DashboardPage() {
               one place.
             </p>
           </div>
+
+          <Link
+  href="/dashboard/check-in"
+  className="flex h-12 items-center justify-center gap-2 rounded-full border border-black/10 bg-white px-5 text-sm font-semibold text-[#171717] transition hover:-translate-y-0.5"
+>
+  <ScanLine size={16} />
+  Check in tickets
+</Link>
 
           <Link
             href="/create-event"

@@ -65,3 +65,59 @@ export const getOrganizerDashboard =
 
     return response.data.dashboard;
   };
+  export type CheckedInTicket = {
+  id: string;
+  code: string;
+  status:
+    | "VALID"
+    | "USED"
+    | "CANCELLED";
+
+  checkedInAt:
+    | string
+    | null;
+
+  user: {
+    id: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+  };
+
+  orderItem: {
+    ticketType: {
+      id: string;
+      name: string;
+    };
+
+    order: {
+      event: {
+        id: string;
+        title: string;
+        slug: string;
+        venue: string;
+        city: string | null;
+        startsAt: string;
+      };
+    };
+  };
+};
+
+export const checkInTicket =
+  async (
+    value: string
+  ): Promise<CheckedInTicket> => {
+    const response =
+      await api.post<{
+        success: boolean;
+        message: string;
+        ticket: CheckedInTicket;
+      }>(
+        "/organizer/check-in",
+        {
+          value,
+        }
+      );
+
+    return response.data.ticket;
+  };

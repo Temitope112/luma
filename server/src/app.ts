@@ -11,7 +11,7 @@ import orderRoutes from "./routes/order.routes.js";
 import ticketRoutes from "./routes/ticket.routes.js";
 import paymentRoutes from "./routes/payment.routes.js";
 import organizerRoutes from "./routes/organizer.routes.js";
-import devAdminRoutes from "./routes/dev-admin.routes.js";
+
 import { paystackWebhook } from "./controllers/payment.controller.js";
 
 import {
@@ -168,10 +168,7 @@ app.use(
   "/api/organizer",
   organizerRoutes
 );
-app.use(
-  "/api/dev-admin",
-  devAdminRoutes
-);
+
 
 // Error handling
 app.use(notFoundHandler);

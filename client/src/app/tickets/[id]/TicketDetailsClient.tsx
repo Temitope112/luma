@@ -272,7 +272,7 @@ export default function TicketDetailsClient({
                   <div className="rounded-[24px] bg-white p-5 text-[#171717] sm:p-7">
                     <div className="mx-auto w-fit rounded-2xl bg-white p-2">
                       <QRCodeSVG
-                        value={`LUMA:TICKET:${ticket.id}`}
+                        value={`LUMA:TICKET:${ticket.code}`}
                         size={190}
                         level="H"
                         marginSize={2}
@@ -297,10 +297,20 @@ export default function TicketDetailsClient({
 
                     <div className="mt-5 rounded-xl bg-[#F4F1EC] px-4 py-3">
                       <span className="text-[9px] uppercase tracking-[0.14em] text-neutral-400">
+                        Ticket code
+                      </span>
+
+                      <p className="mt-1 break-all font-mono text-[11px] font-semibold text-[#171717]">
+                        {ticket.code}
+                      </p>
+                    </div>
+
+                    <div className="mt-3 rounded-xl border border-black/5 px-4 py-3">
+                      <span className="text-[9px] uppercase tracking-[0.14em] text-neutral-400">
                         Ticket ID
                       </span>
 
-                      <p className="mt-1 break-all font-mono text-[10px] text-neutral-600">
+                      <p className="mt-1 break-all font-mono text-[10px] text-neutral-500">
                         {ticket.id}
                       </p>
                     </div>
